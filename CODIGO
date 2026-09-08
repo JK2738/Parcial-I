@@ -1,0 +1,200 @@
+import json
+import os
+
+
+class Transaccion:
+    def __init__(self, id, titular, valor, hora, pais, dispositivo_conocido):
+
+        if not titular.strip():
+            raise ValueError("El titular no puede estar vacío.")
+
+        if valor <= 0:
+            raise ValueError("El valor debe ser mayor que cero.")
+
+        if hora < 0 or hora > 23:
+            raise ValueError("La hora debe estar entre 0 y 23.")
+
+        if not pais.strip():
+            raise ValueError("El país no puede estar vacío.")
+
+        if not isinstance(dispositivo_conocido, bool):
+            raise ValueError("El dispositivo debe ser True o False.")
+
+        self.id = id
+        self.titular = titular
+        self.valor = valor
+        self.hora = hora
+        self.pais = pais
+        self.dispositivo_conocido = dispositivo_conocido
+
+        self.puntaje_riesgo = self.calcular_riesgo()
+        self.clasificacion = self.clasificar()
+
+    def calcular_riesgo(self):
+        puntaje = 0
+
+        if self.valor >= 2000000:
+            puntaje += 30
+
+        if 0 <= self.hora <= 5:
+            puntaje += 20
+
+        if self.pais.strip().lower() != "colombia":
+            puntaje += 25
+
+        if self.dispositivo_conocido is False:
+            puntaje += 30
+
+        self.puntaje_riesgo = puntaje
+        return puntaje
+
+    def clasificar(self):
+        if self.puntaje_riesgo <= 29:
+            return "NORMAL"
+        elif self.puntaje_riesgo <= 59:
+            return "SOSPECHOSA"
+        else:
+            return "ALTO RIESGO"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "titular": self.titular,
+            "valor": self.valor,
+            "hora": self.hora,
+            "pais": self.pais,
+            "dispositivo_conocido": self.dispositivo_conocido,
+            "puntaje_riesgo": self.puntaje_riesgo,
+            "clasificacion": self.clasificacion
+        }
+
+    @classmethod
+    def from_dict(cls, datos):
+        return cls(
+            datos["id"],
+            datos["titular"],
+            datos["valor"],
+            datos["hora"],
+            datos["pais"],
+            datos["dispositivo_conocido"]
+        )
+
+
+def cargar_transacciones():
+    if os.path.exists("transacciones.json"):
+        try:
+            with open("transacciones.json", "r", encoding="utf-8") as archivo:
+                datos = json.load(archivo)
+
+            transacciones = []
+
+            for dato in datos:
+                transacciones.append(Transaccion.from_dict(dato))
+
+            return transacciones
+
+        except (json.JSONDecodeError, KeyError, ValueError):
+            print("No se pudo leer correctamente el archivo JSON.")
+            return []
+
+    return []
+
+
+def guardar_transacciones(transacciones):
+    datos = []
+
+    for transaccion in transacciones:
+        datos.append(transaccion.to_dict())
+
+    with open("transacciones.json", "w", encoding="utf-8") as archivo:
+        json.dump(datos, archivo, indent=4, ensure_ascii=False)
+
+
+def mostrar_transaccion(transaccion):
+    print("-----------------------------")
+    print("ID:", transaccion.id)
+    print("Titular:", transaccion.titular)
+    print("Puntaje de riesgo:", transaccion.puntaje_riesgo)
+    print("Clasificación:", transaccion.clasificacion)
+
+
+def registrar_transaccion(transacciones):
+
+    try:
+        id = int(input("Ingresa el ID: "))
+        titular = input("Ingresa el titular: ")
+
+        valor = float(input("Ingresa el valor: "))
+        hora = int(input("Ingresa la hora (0-23): "))
+
+        pais = input("Ingresa el país: ")
+
+        dispositivo = input(
+            "¿El dispositivo es conocido? (True/False): "
+        )
+
+        if dispositivo.lower() == "true":
+            dispositivo_conocido = True
+        elif dispositivo.lower() == "false":
+            dispositivo_conocido = False
+        else:
+            raise ValueError("Debe escribir True o False.")
+
+        nueva_transaccion = Transaccion(
+            id,
+            titular,
+            valor,
+            hora,
+            pais,
+            dispositivo_conocido
+        )
+
+        transacciones.append(nueva_transaccion)
+
+        print("\nLa transacción ha sido registrada exitosamente.")
+        mostrar_transaccion(nueva_transaccion)
+
+        guardar_transacciones(transacciones)
+
+    except ValueError as error:
+        print("Error:", error)
+
+
+def listar_transacciones(transacciones):
+
+    if len(transacciones) == 0:
+        print("\nNo hay transacciones registradas.")
+        return
+
+    print("\n===== TRANSACCIONES =====")
+
+    for transaccion in transacciones:
+        mostrar_transaccion(transaccion)
+
+transacciones = cargar_transacciones()
+
+while True:
+
+    print("\n==============================")
+    print("       SISTEMA ANTIFRAUDE")
+    print("==============================")
+    print("1. Registrar transaccion")
+    print("2. Listar transacciones")
+    print("3. Salir")
+
+    opcion = input("Seleccione una opcion: ")
+
+    if opcion == "1":
+        registrar_transaccion(transacciones)
+
+    elif opcion == "2":
+        listar_transacciones(transacciones)
+
+    elif opcion == "3":
+        guardar_transacciones(transacciones)
+        print("La información ha sido guardada exitosamente.")
+        print("Programa finalizado.")
+        break
+
+    else:
+        print("Opción no válida.")

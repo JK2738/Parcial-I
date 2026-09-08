@@ -1,0 +1,133 @@
+# Parcial — Detector de Transmisiones Sospechosas
+
+Nombre:  JUAN CARLOS TEJEDA
+Código:  SISTEMA_ANTIFRAUDE
+Grupo:  4E
+
+## 1. ¿Qué debe hacer el programa?
+
+Escriba en máximo 3 o 4 líneas cuál es el objetivo del programa.
+
+Respuesta: El programa que se debe desarrollar tiene como objetivo registrar y analizar transacciones financieras para identificar cuáles pueden representar un riesgo de fraude. Por ejemplo, una transacción de un valor alto, realizada durante la madrugada, desde otro país o desde un dispositivo desconocido tendrá un mayor puntaje de riesgo. Cuando el programa vuelva a ejecutarse, podrá leer este archivo y recuperar las transacciones almacenadas.
+
+---
+
+## 2. Clase `Transmision`
+
+La clase tendrá los siguientes atributos:
+
+- `id`:  identifica cada transacción
+- `origen`: indica de dónde se realiza la transacción
+- `mensaje`: contiene la información de la transacción que se va a analizar.
+- `puntaje`: guarda el resultado del análisis de riesgo.
+- `clasificacion`: indica el nivel de riesgo según el puntaje obtenido.
+
+
+
+Escriba brevemente qué representa cada uno.
+
+---
+
+## 3. Métodos
+
+### `analizar()`
+
+Responsabilidad: Se encarga de revisar las condiciones de la transacción y sumar los puntos correspondientes para obtener el puntaje de riesgo.
+
+### `clasificar()`
+
+Responsabilidad: Se encarga de revisar el puntaje obtenido y determinar si la transacción es NORMAL, SOSPECHOSA o de ALTO RIESGO.
+
+
+### `to_dict()`
+
+Responsabilidad: Convierte el objeto en un diccionario para poder guardar la información en el archivo JSON.
+
+
+
+### `from_dict()`
+
+Responsabilidad: Recibe un diccionario leído desde el archivo JSON y lo convierte nuevamente en un objeto.
+
+
+---
+
+## 4. Algoritmo de análisis
+
+Complete el siguiente pseudocódigo:
+
+```text
+puntaje = 0
+
+SI el mensaje contiene "valor alto"
+    sumar ___30___ puntos
+
+SI el mensaje contiene "operación sospechosa"
+    sumar 25 puntos
+
+SI el mensaje contiene "dispositivo desconocido"
+    sumar 20 puntos
+
+SI el mensaje contiene  "país extranjero"
+    sumar 15 puntos
+
+SI el mensaje contiene "operación premiada"
+    sumar 35 puntos
+```
+
+---
+
+## 5. Persistencia
+
+Explique brevemente qué ocurre al iniciar el programa:
+
+```text
+JSON
+ ↓
+_Diccionarios
+ ↓
+_Objetos Transaccion
+```
+
+Explique qué ocurre al guardar:
+
+```text
+Objetos
+ ↓
+_Diccionarios
+ ↓
+JSON
+```
+
+---
+
+## 6. Menú
+
+Indique qué debe hacer cada opción:
+
+### Opción 1 — Registrar transmisión
+
+1.  Registrar transmisión
+Pedir los datos de la transacción.
+Crear la transacción y calcular su puntaje de riesgo.
+Agregarla a la lista y guardarla en el archivo JSON.
+
+
+
+### Opción 2 — Listar transmisiones
+
+Listar transmisiones
+Recorrer la lista de transacciones.
+Mostrar el ID, titular, puntaje de riesgo y clasificación.
+
+
+### Opción 3 — Salir
+
+Acción:
+
+Guardar la lista completa de transacciones en el archivo JSON y cerrar el programa.
+
+
+## Nota
+
+Este archivo debe completarse durante los primeros 15 minutos del parcial, antes de comenzar la implementación.

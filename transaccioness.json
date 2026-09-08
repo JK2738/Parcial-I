@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1151479923,
+        "titular": "juan carlos",
+        "valor": 2000.0,
+        "hora": 7,
+        "pais": "colombia",
+        "dispositivo_conocido": true,
+        "puntaje_riesgo": 0,
+        "clasificacion": "NORMAL"
+    }
+]
